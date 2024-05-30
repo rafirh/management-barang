@@ -14,18 +14,6 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(UserSeeder::class);
-        $this->call(WarnaSeeder::class);
-        $this->call(MerkMobilSeeder::class);
-        $this->call(JenisMobilSeeder::class);
-        $this->call(TransmisiSeeder::class);
-        $this->call(CcSeeder::class);
-        $this->call(TipeMobilSeeder::class);
-        $this->call(AgenSeeder::class);
-        $this->call(MobilSeeder::class);
-        $this->call(StatusPembayaranSeeder::class);
-        $this->call(StatusPengembalianSeeder::class);
-        $this->call(MetodePembayaranSeeder::class);
-        $this->call(DendaSeeder::class);
-        $this->call(JaminanSeeder::class);
+        $this->call(InventoryCategorySeeder::class);
     }
 }
