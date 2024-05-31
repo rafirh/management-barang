@@ -15,17 +15,29 @@ class InventoryCategorySeeder extends Seeder
     {
         InventoryCategory::insert([
             [
-                'name' => 'Motor',
-                'desc' => 'Kategori yang digunakan untuk motor',
+                'name' => 'Mesin',
+                'desc' => 'Kategori yang digunakan untuk suku cadang mesin',
             ],
             [
-                'name' => 'Mobil',
-                'desc' => 'Kategori yang digunakan untuk mobil',
+                'name' => 'Elektronik',
+                'desc' => 'Kategori yang digunakan untuk suku cadang elektronik',
             ],
             [
-                'name' => 'Sepeda',
-                'desc' => 'Kategori yang digunakan untuk sepeda',
+                'name' => 'Sistem Pengereman',
+                'desc' => 'Kategori yang digunakan untuk suku cadang sistem pengereman',
             ],
+            [
+                'name' => 'Sistem Pendinginan',
+                'desc' => 'Kategori yang digunakan untuk suku cadang sistem pendinginan',
+            ],
+            [
+                'name' => 'Sistem Bahan Bakar',
+                'desc' => 'Kategori yang digunakan untuk suku cadang sistem bahan bakar',
+            ],
+            [
+                'name' => 'Transmisi',
+                'desc' => 'Kategori yang digunakan untuk suku cadang transmisi',
+            ]
         ]);
     }
 }
