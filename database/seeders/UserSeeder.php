@@ -15,10 +15,10 @@ class UserSeeder extends Seeder
     {
         User::insert([
             [
-                'name' => 'Rafi Rahman',
-                'email' => 'rafirahmann18@gmail.com',
+                'name' => 'Sevia Listiana',
+                'email' => 'sevialistiana@gmail.com',
                 'password' => bcrypt('123456'),
-                'avatar_url' => 'https://i.pravatar.cc/150?img=1'
+                'avatar_url' => null
             ]
         ]);
     }
