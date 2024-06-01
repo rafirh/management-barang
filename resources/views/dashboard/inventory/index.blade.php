@@ -140,20 +140,51 @@
                       </td>
                       <td>
                         <div class="d-flex justify-content-center">
-                          <button class="btn btn-icon btn-pill bg-danger-lt"
-                            data-action="{{ route('dashboard.inventories.destroy', $inventory->id) }}"
-                            data-bs-toggle="modal" data-bs-target="#modalDelete" title="Hapus">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler" width="24"
-                              height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                              fill="none" stroke-linecap="round" stroke-linejoin="round">
-                              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                              <line x1="4" y1="7" x2="20" y2="7" />
-                              <line x1="10" y1="11" x2="10" y2="17" />
-                              <line x1="14" y1="11" x2="14" y2="17" />
-                              <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-                              <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                          <button class="btn btn-icon btn-pill bg-muted-lt" data-bs-toggle="dropdown"
+                            aria-expanded="false" title="Lainnya">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-dots-vertical"
+                              width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                              stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                              <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                              <circle cx="12" cy="12" r="1">
+                              </circle>
+                              <circle cx="12" cy="19" r="1">
+                              </circle>
+                              <circle cx="12" cy="5" r="1">
+                              </circle>
                             </svg>
                           </button>
+                          <div class="text-muted dropdown-menu dropdown-menu-end">
+                            <a class="dropdown-item" href="{{ route('dashboard.inventories.edit', $inventory->id) }}">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit me-2"
+                                width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                                stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none">
+                                </path>
+                                <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1">
+                                </path>
+                                <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z">
+                                </path>
+                                <path d="M16 5l3 3"></path>
+                              </svg>
+                              Ubah
+                            </a>
+                            <button class="dropdown-item btn-action-delete"
+                              data-action="{{ route('dashboard.inventories.destroy', $inventory->id) }}" data-bs-toggle="modal"
+                              data-bs-target="#modalDelete">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler me-2" width="24"
+                                height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <line x1="4" y1="7" x2="20" y2="7" />
+                                <line x1="10" y1="11" x2="10" y2="17" />
+                                <line x1="14" y1="11" x2="14" y2="17" />
+                                <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                                <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                              </svg>
+                              Hapus
+                            </button>
+                          </div>
                         </div>
                       </td>
                     </tr>
@@ -356,37 +387,86 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Add Partner</h5>
+          <h5 class="modal-title">Tambah Barang</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <form action="{{ route('dashboard.inventories.store') }}" method="post" enctype="multipart/form-data">
           @csrf
           <div class="modal-body">
             <div class="row">
-              <div class="col-12 mb-3">
-                <label class="form-label required">Name</label>
+              <div class="col-12 mb-2">
+                <div class="form-label required">Kategori</div>
+                <select class="form-select @error('category_id') is-invalid @enderror" name="category_id">
+                    <option value="" disabled selected>Pilih</option>
+                    @foreach ($categories as $category)
+                      <option value="{{ $category->id }}"
+                          {{ request()->category_id == $category->id ? 'selected' : '' }}>
+                          {{ $category->name }}
+                      </option>
+                    @endforeach
+                </select>
+                @error('category_id')
+                  <div class="invalid-feedback">
+                    {{ $message }}
+                  </div>
+                @enderror
+              </div>
+              <div class="col-12 mb-2">
+                <label class="form-label required">Kode</label>
+                <input type="text" class="form-control @error('code') is-invalid @enderror" name="code"
+                  placeholder="Masukkan kode barang" value="{{ old('code') }}" />
+                @error('code')
+                  <div class="invalid-feedback">
+                    {{ $message }}
+                  </div>
+                @enderror
+              </div>
+              <div class="col-12 mb-2">
+                <label class="form-label required">Nama</label>
                 <input type="text" class="form-control @error('name') is-invalid @enderror" name="name"
-                  placeholder="Masukkan nama partner" value="{{ old('name') }}" />
+                  placeholder="Masukkan nama barang" value="{{ old('name') }}" />
                 @error('name')
                   <div class="invalid-feedback">
                     {{ $message }}
                   </div>
                 @enderror
               </div>
+              <div class="col-12 mb-2">
+                <label class="form-label required">Harga <small class="text-muted">(Rp)</small></label>
+                <input type="number" class="form-control @error('price') is-invalid @enderror" name="price"
+                  placeholder="Masukkan harga barang (Rp)" value="{{ old('price') }}" />
+                @error('price')
+                  <div class="invalid-feedback">
+                    {{ $message }}
+                  </div>
+                @enderror
+              </div>
+              <div class="col-12 mb-2">
+                <label class="form-label required">Stok Awal</label>
+                <input type="number" class="form-control @error('stock') is-invalid @enderror" name="stock"
+                  placeholder="Masukkan kode barang" value="{{ old('stock') }}" />
+                @error('stock')
+                  <div class="invalid-feedback">
+                    {{ $message }}
+                  </div>
+                @enderror
+              </div>
               <div class="col-12">
-                <label class="form-label required">Logo <span class="fs-5 text-muted">(Size 16:9)</span></label>
-                <input name="logo" class="filepond" type="file"
-                  accept="image/png, image/jpeg, image/jpg, image/svg+xml">
-                @error('logo')
-                  <div class="text-danger fs-5 d-block">{{ $message }}</div>
+                <label class="form-label">Deskripsi</label>
+                <textarea class="form-control @error('desc') is-invalid @enderror" name="desc" rows="3"
+                  placeholder="Masukkan deskripsi barang">{{ old('desc') }}</textarea>
+                @error('desc')
+                  <div class="invalid-feedback">
+                    {{ $message }}
+                  </div>
                 @enderror
               </div>
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn me-auto" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn me-auto" data-bs-dismiss="modal">Bata;</button>
             <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">
-              Save
+              Simpan
             </button>
           </div>
         </form>

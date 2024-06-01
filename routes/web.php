@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::redirect('/', '/login')->name('redirectByRole');
+
 Route::group(['middleware' => 'guest'], function () {
     Route::get('/login', [AuthController::class, 'index'])->name('auth.index');
     Route::post('/login', [AuthController::class, 'authenticate'])->name('auth.authenticate');
