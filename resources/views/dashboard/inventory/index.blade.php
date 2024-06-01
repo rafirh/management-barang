@@ -191,7 +191,7 @@
                   @endforeach
                   @if ($inventories->count() == 0)
                     <tr class="text-center">
-                      <td colspan="10">
+                      <td colspan="99">
                         <div class="empty bg-transparent" style="height: 500px;">
                           <div class="empty-img"><img src="{{ asset('img\error\undraw_quitting_time_dm8t.svg') }}"
                               height="128">
@@ -400,7 +400,7 @@
                     <option value="" disabled selected>Pilih</option>
                     @foreach ($categories as $category)
                       <option value="{{ $category->id }}"
-                          {{ request()->category_id == $category->id ? 'selected' : '' }}>
+                          {{ old('category_id') == $category->id ? 'selected' : '' }}>
                           {{ $category->name }}
                       </option>
                     @endforeach
@@ -464,7 +464,7 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn me-auto" data-bs-dismiss="modal">Bata;</button>
+            <button type="button" class="btn me-auto" data-bs-dismiss="modal">Batal</button>
             <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">
               Simpan
             </button>

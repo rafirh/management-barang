@@ -4,230 +4,560 @@
 @endsection
 
 @section('content')
-    {{-- Page Header --}}
-    <div class="page-header d-print-none mt-2">
-        <div class="container-xl">
-            <div class="row g-2 align-items-center">
-                <div class="col">
-                    <h3 class="page-title">
-                        {{ $title }}
-                    </h3>
-                </div>
-            </div>
+  {{-- Page Header --}}
+  <div class="page-header d-print-none mt-2">
+    <div class="container-xl">
+      <div class="row g-2 align-items-center">
+        <div class="col">
+          <h3 class="page-title">
+            {{ $title }}
+          </h3>
+          <div class="text-muted mt-1">
+            {{ $transactions->firstItem() ?? '0' }}-{{ $transactions->lastItem() ?? '0' }} dari
+            {{ $transactions->total() }} data
+          </div>
         </div>
+        <div class="col-auto ms-auto d-print-none">
+          <div class="btn-list d-flex">
+            <a href="#" class="btn btn-primary d-none d-sm-inline-block" data-bs-toggle="modal"
+              data-bs-target="#modalAdd" id="btnAdd">
+              <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-plus" width="24"
+                height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M12 5l0 14"></path>
+                <path d="M5 12l14 0"></path>
+              </svg>
+              Tambah Transaksi
+            </a>
+            <a href="#" class="btn btn-primary d-sm-none btn-icon" data-bs-toggle="modal" data-bs-target="#modalAdd"
+              aria-label="Tambah transaksi">
+              <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-plus" width="24"
+                height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M12 5l0 14"></path>
+                <path d="M5 12l14 0"></path>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="row g-2 align-items-center">
+        <div class="col col-sm-8 col-md-6 col-xl-4 mt-3 d-flex">
+          <div class="input-group me-2">
+            <input type="text" class="form-control" placeholder="Cari ..." id="inputSearch"
+              value="{{ request()->q }}">
+            <button class="btn btn-icon" type="button" id="btnSearch">
+              <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24"
+                height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"></path>
+                <path d="M21 21l-6 -6"></path>
+              </svg>
+            </button>
+          </div>
+          <a href="#" class="btn btn-outline-primary btn-icon" data-bs-toggle="modal"
+            data-bs-target="#modal-option">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-filter" width="24"
+              height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+              <path d="M5.5 5h13a1 1 0 0 1 .5 1.5l-5 5.5l0 7l-4 -3l0 -4l-5 -5.5a1 1 0 0 1 .5 -1.5"></path>
+            </svg>
+          </a>
+        </div>
+        <div class="col-auto mt-3">
+          @if (isParamsExist($allowedParams))
+            <a href="{{ route('dashboard.transactions.index') }}" class="btn btn-outline-danger btn-icon"
+              data-bs-toggle="tooltip" data-bs-original-title="Clear filter" data-bs-placement="bottom">
+              <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash-x" width="24"
+                height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M4 7h16"></path>
+                <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                <path d="M10 12l4 4m0 -4l-4 4"></path>
+              </svg>
+            </a>
+          @endif
+        </div>
+      </div>
     </div>
+  </div>
 
-    <!-- Page body -->
-    <div class="page-body">
-        <div class="container-xl">
-            <div class="row row-cards">
-                <div class="col-12">
-                    {{-- <div class="row row-cards">
-                        <div class="col-sm-6 col-xl-3">
-                            <div class="card card-sm">
-                                <div class="card-body">
-                                    <div class="row align-items-center">
-                                        <div class="col-auto">
-                                            <span class="bg-teal text-white avatar">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-share" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                    <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
-                                                    <path d="M6 21v-2a4 4 0 0 1 4 -4h3"></path>
-                                                    <path d="M16 22l5 -5"></path>
-                                                    <path d="M21 21.5v-4.5h-4.5"></path>
-                                                </svg>
-                                            </span>
-                                        </div>
-                                        <div class="col">
-                                            <div class="fw-bold">
-                                                {{ $total_visitor }}
-                                            </div>
-                                            <div class="text-muted">
-                                                visitor
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+  <!-- Page body -->
+  <div class="page-body">
+    <div class="container-xl">
+      <div class="row">
+        <div class="col">
+          <div class="card">
+            <div class="table-responsive">
+              <table class="table card-table table-vcenter text-nowrap datatable">
+                <thead>
+                  <tr>
+                    <th>No.</th>
+                    <th>Tanggal</th>
+                    <th>Barang</th>
+                    <th>Deskripsi</th>
+                    <th>Jumlah</th>
+                    <th>Total Harga</th>
+                    <th>Tipe</th>
+                    <th class="text-center">Opsi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @foreach ($transactions as $transaction)
+                    <tr class="text-muted">
+                      <td>{{ $loop->iteration + $transactions->firstItem() - 1 }}</td>
+                      <td>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time"
+                          width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                          fill="none" stroke-linecap="round" stroke-linejoin="round">
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                          <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4"></path>
+                          <path d="M18 18m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"></path>
+                          <path d="M15 3v4"></path>
+                          <path d="M7 3v4"></path>
+                          <path d="M3 11h16"></path>
+                          <path d="M18 16.496v1.504l1 1"></path>
+                        </svg>
+                        {{ formatDate($transaction->date, 'd F Y') }}
+                      </td>
+                      <td>
+                        <span {{ add_title_tooltip($transaction->inventory->name ?? '-', 24) }}>
+                          {{ mb_strimwidth($transaction->inventory->name ?? '-', 0, 24, '...') }}
+                        </span>
+                      </td>
+                      <td>
+                        <span {{ add_title_tooltip($transaction->desc ?? '-', 35) }}>
+                          {{ mb_strimwidth($transaction->desc ?? '-', 0, 35, '...') }}
+                        </span>
+                      </td>
+                      <td>
+                        {{ $transaction->qty ?? 0 }}
+                      </td>
+                      <td>
+                        {{ formatRupiah($transaction->qty * $transaction->inventory->price) }}
+                      </td>
+                      <td>
+                        @if ($transaction->type == 'Masuk')
+                          <span class="badge badge-outline text-success">Masuk</span>
+                        @else
+                          <span class="badge badge-outline text-danger">Keluar</span>
+                        @endif
+                      </td>
+                      <td>
+                        <div class="d-flex justify-content-center">
+                          <button class="btn btn-icon btn-pill bg-muted-lt" data-bs-toggle="dropdown"
+                            aria-expanded="false" title="Lainnya">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-dots-vertical"
+                              width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                              stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                              <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                              <circle cx="12" cy="12" r="1">
+                              </circle>
+                              <circle cx="12" cy="19" r="1">
+                              </circle>
+                              <circle cx="12" cy="5" r="1">
+                              </circle>
+                            </svg>
+                          </button>
+                          <div class="text-muted dropdown-menu dropdown-menu-end">
+                            <a class="dropdown-item"
+                              href="{{ route('dashboard.transactions.edit', $transaction->id) }}">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit me-2"
+                                width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                                stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none">
+                                </path>
+                                <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1">
+                                </path>
+                                <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z">
+                                </path>
+                                <path d="M16 5l3 3"></path>
+                              </svg>
+                              Ubah
+                            </a>
+                            <button class="dropdown-item btn-action-delete"
+                              data-action="{{ route('dashboard.transactions.destroy', $transaction->id) }}"
+                              data-bs-toggle="modal" data-bs-target="#modalDelete">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler me-2" width="24"
+                                height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <line x1="4" y1="7" x2="20" y2="7" />
+                                <line x1="10" y1="11" x2="10" y2="17" />
+                                <line x1="14" y1="11" x2="14" y2="17" />
+                                <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                                <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                              </svg>
+                              Hapus
+                            </button>
+                          </div>
                         </div>
-                        <div class="col-sm-6 col-xl-3">
-                            <div class="card card-sm">
-                                <div class="card-body">
-                                    <div class="row align-items-center">
-                                        <div class="col-auto">
-                                            <span class="bg-indigo text-white avatar">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-event" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                    <path d="M4 5m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"></path>
-                                                    <path d="M16 3l0 4"></path>
-                                                    <path d="M8 3l0 4"></path>
-                                                    <path d="M4 11l16 0"></path>
-                                                    <path d="M8 15h2v2h-2z"></path>
-                                                </svg>
-                                            </span>
-                                        </div>
-                                        <div class="col">
-                                            <div class="fw-bold">
-                                                {{ $total_visitor_today }}
-                                            </div>
-                                            <div class="text-muted">
-                                                visitor today
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                      </td>
+                    </tr>
+                  @endforeach
+                  @if ($transactions->count() == 0)
+                    <tr class="text-center">
+                      <td colspan="10">
+                        <div class="empty bg-transparent" style="height: 500px;">
+                          <div class="empty-img"><img src="{{ asset('img\error\undraw_quitting_time_dm8t.svg') }}"
+                              height="128">
+                          </div>
+                          <p class="empty-title">Data tidak ditemukan</p>
+                          <p class="empty-subtitle text-muted">
+                            Coba sesuaikan pencarian atau filter Anda untuk menemukan yang Anda cari.
+                          </p>
+                          <div class="empty-action">
+                            <a href="{{ route('dashboard.transactions.index') }}" class="btn btn-outline-danger">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash"
+                                width="24" height="24" viewBox="0 0 24 24" stroke-width="1"
+                                stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none">
+                                </path>
+                                <path
+                                  d="M4 7l16 0m-10 4l0 6m4 -6l0 6m-9 -10l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12m-10 0v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3">
+                                </path>
+                              </svg>
+                              Bersihkan filter
+                            </a>
+                          </div>
                         </div>
-                        <div class="col-sm-6 col-xl-3">
-                            <div class="card card-sm">
-                                <div class="card-body">
-                                    <div class="row align-items-center">
-                                        <div class="col-auto">
-                                            <span class="bg-azure text-white avatar">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clipboard-list" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                    <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2"></path>
-                                                    <path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z"></path>
-                                                    <path d="M9 12l.01 0"></path>
-                                                    <path d="M13 12l2 0"></path>
-                                                    <path d="M9 16l.01 0"></path>
-                                                    <path d="M13 16l2 0"></path>
-                                                </svg>
-                                            </span>
-                                        </div>
-                                        <div class="col">
-                                            <div class="fw-bold">
-                                                {{ $total_portfolio }}
-                                            </div>
-                                            <div class="text-muted">
-                                                portfolio
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-xl-3">
-                            <div class="card card-sm">
-                                <div class="card-body">
-                                    <div class="row align-items-center">
-                                        <div class="col-auto">
-                                            <span class="bg-cyan text-white avatar">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users-group" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                    <path d="M10 13a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
-                                                    <path d="M8 21v-1a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v1"></path>
-                                                    <path d="M15 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
-                                                    <path d="M17 10h2a2 2 0 0 1 2 2v1"></path>
-                                                    <path d="M5 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
-                                                    <path d="M3 13v-1a2 2 0 0 1 2 -2h2"></path>
-                                                </svg>
-                                            </span>
-                                        </div>
-                                        <div class="col">
-                                            <div class="fw-bold">
-                                                {{ $total_partner }}
-                                            </div>
-                                            <div class="text-muted">
-                                                partner
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h3 class="card-title">
-                                        Visitor Statistics 
-                                        <span class="text-muted fs-5 d-none d-lg-inline-block">(last 30 days)</span>
-                                    </h3>
-                                    <div id="visitorChart" class="chart-lg"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="card" style="height: 30rem">
-                                <div class="card-header">
-                                    <h3 class="card-title">
-                                        Latest Visitors 
-                                        <span class="text-muted fs-5 d-none d-lg-inline-block">(latest 50)</span>
-                                    </h3>
-                                </div>
-                                <div class="table-responsive">
-                                    <table class="table card-table table-vcenter" style="white-space: nowrap;">
-                                        <thead class="sticky-top">
-                                            <tr>
-                                                <th>Time</th>
-                                                <th>IP Address</th>
-                                                <th>City</th>
-                                                <th>Country</th>
-                                                <th>ISP</th>
-                                                <th>User Agent</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($latest_visitors as $visitor)
-                                                <tr class="text-muted">
-                                                    <td>
-                                                        {{ formatDate($visitor->created_at, 'd M Y H:i') }}
-                                                    </td>
-                                                    <td>
-                                                        <span {{ add_title_tooltip($visitor->ip_address ?? '-', 15) }}>
-                                                            {{ mb_strimwidth($visitor->ip_address ?? '-', 0, 15, '...') }}
-                                                        </span>
-                                                    </td>
-                                                    <td>{{ $visitor->city }}</td>
-                                                    <td>
-                                                        <span {{ add_title_tooltip($visitor->country ?? '-', 15) }}>
-                                                            {{ mb_strimwidth($visitor->country ?? '-', 0, 15, '...') }}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <span {{ add_title_tooltip($visitor->isp ?? '-', 24) }}>
-                                                            {{ mb_strimwidth($visitor->isp ?? '-', 0, 24, '...') }}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <span {{ add_title_tooltip($visitor->user_agent ?? '-', 24) }}>
-                                                            {{ mb_strimwidth($visitor->user_agent ?? '-', 0, 24, '...') }}
-                                                        </span>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                            @if ($latest_visitors->count() == 0)
-                                                <tr class="text-center">
-                                                    <td colspan="3">
-                                                        <div class="empty bg-transparent" style="height: 292px">
-                                                            <div class="empty-img"><img
-                                                                    src="{{ asset('img\error\undraw_quitting_time_dm8t.svg') }}"
-                                                                    height="128">
-                                                            </div>
-                                                            <p class="empty-title">No visitors</p>
-                                                            <p class="empty-subtitle text-muted">
-                                                                There are no visitors who have entered your website
-                                                            </p>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @endif
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div> --}}
-                </div>
+                      </td>
+                    </tr>
+                  @endif
+                </tbody>
+              </table>
             </div>
+            @if ($transactions->perPage() < $transactions->total())
+              <div class="mt-3 ms-3">
+                {{ $transactions->withQueryString()->onEachSide(1)->links('pagination.custom') }}
+              </div>
+            @endif
+          </div>
         </div>
+      </div>
     </div>
+  </div>
+
+  {{-- Modal option --}}
+  <div class="modal modal-blur fade" id="modal-option" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Opsi Pencarian</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form method="GET" id="formOption">
+          <input type="hidden" name="q" id="q">
+          <div class="modal-body">
+            <div class="row mb-3">
+              <div class="col-12">
+                <div class="form-label">Tampilkan</div>
+                <div class="form-selectgroup">
+                  <label class="form-selectgroup-item">
+                    <input type="radio" name="limit" value="20" class="form-selectgroup-input"
+                      {{ request()->limit == '20' ? 'checked' : '' }}>
+                    <span class="form-selectgroup-label">
+                      20
+                    </span>
+                  </label>
+                  <label class="form-selectgroup-item">
+                    <input type="radio" name="limit" value="50" class="form-selectgroup-input"
+                      {{ request()->limit == '50' ? 'checked' : '' }}>
+                    <span class="form-selectgroup-label">
+                      50
+                    </span>
+                  </label>
+                  <label class="form-selectgroup-item">
+                    <input type="radio" name="limit" value="100" class="form-selectgroup-input"
+                      {{ request()->limit == '100' ? 'checked' : '' }}>
+                    <span class="form-selectgroup-label">
+                      100
+                    </span>
+                  </label>
+                  <label class="form-selectgroup-item">
+                    <input type="radio" name="limit" value="200" class="form-selectgroup-input"
+                      {{ request()->limit == '200' ? 'checked' : '' }}>
+                    <span class="form-selectgroup-label">
+                      200
+                    </span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-12">
+                <div class="form-label">Tipe</div>
+                <select class="form-select" name="sortby">
+                  <option value="" disabled selected>Pilih</option>
+                  @foreach ($types as $type)
+                    <option value="{{ $type }}" {{ request()->type == $type ? 'selected' : '' }}>
+                      {{ $type }}
+                    </option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-12">
+                <div class="form-label">Urutkan berdasarkan</div>
+                <select class="form-select" name="sortby">
+                  <option value="" disabled selected>Pilih</option>
+                  @foreach ($sortables as $key => $value)
+                    <option value="{{ $key }}" {{ request()->sortby == $key ? 'selected' : '' }}>
+                      {{ $value }}
+                    </option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-12">
+                <div class="form-label">Urutan</div>
+                <div class="form-selectgroup">
+                  <label class="form-selectgroup-item">
+                    <input type="radio" name="order" value="asc" class="form-selectgroup-input"
+                      {{ request()->order == 'asc' ? 'checked' : '' }}>
+                    <span class="form-selectgroup-label">
+                      <svg xmlns="http://www.w3.org/2000/svg"
+                        class="icon icon-tabler icon-tabler-sort-ascending-letters me-1" width="24" height="24"
+                        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M15 10v-5c0 -1.38 .62 -2 2 -2s2 .62 2 2v5m0 -3h-4"></path>
+                        <path d="M19 21h-4l4 -7h-4"></path>
+                        <path d="M4 15l3 3l3 -3"></path>
+                        <path d="M7 6v12"></path>
+                      </svg>
+                      Ascending
+                    </span>
+                  </label>
+                  <label class="form-selectgroup-item">
+                    <input type="radio" name="order" value="desc" class="form-selectgroup-input"
+                      {{ request()->order == 'desc' ? 'checked' : '' }}>
+                    <span class="form-selectgroup-label">
+                      <svg xmlns="http://www.w3.org/2000/svg"
+                        class="icon icon-tabler icon-tabler-sort-descending-letters me-1" width="24" height="24"
+                        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M15 21v-5c0 -1.38 .62 -2 2 -2s2 .62 2 2v5m0 -3h-4"></path>
+                        <path d="M19 10h-4l4 -7h-4"></path>
+                        <path d="M4 15l3 3l3 -3"></path>
+                        <path d="M7 6v12"></path>
+                      </svg>
+                      Descending
+                    </span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn me-auto" data-bs-dismiss="modal">Tutup</button>
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btnFormOption">Cari</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  {{-- Modal delete --}}
+  <div class="modal modal-blur fade" id="modalDelete" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-status bg-danger"></div>
+        <div class="modal-body text-center py-4">
+          <!-- Download SVG icon from http://tabler-icons.io/i/alert-triangle -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-danger icon-lg" width="24" height="24"
+            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M12 9v2m0 4v.01" />
+            <path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75" />
+          </svg>
+          <h3>Apakah anda yakin?</h3>
+          <div class="text-muted">Data yang dihapus tidak dapat dikembalikan.</div>
+        </div>
+        <div class="modal-footer">
+          <div class="w-100">
+            <div class="row">
+              <div class="col"><a href="#" class="btn w-100" data-bs-dismiss="modal">
+                  Batal
+                </a></div>
+              <div class="col">
+                <form method="post" id="formDelete">
+                  @csrf
+                  @method('delete')
+                  <button type="submit" class="btn btn-danger w-100" id="btnDelete">
+                    Ya, hapus
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{-- Modal add --}}
+  <div class="modal modal-blur fade" id="modalAdd" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Tambah Barang</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form action="{{ route('dashboard.transactions.store') }}" method="post" enctype="multipart/form-data">
+          @csrf
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-12 mb-2">
+                <div class="form-label required">Tipe</div>
+                <select class="form-select @error('type') is-invalid @enderror" name="type">
+                  <option value="" disabled selected>Pilih</option>
+                  @foreach ($types as $type)
+                    <option value="{{ $type }}" {{ old('type') == $type ? 'selected' : '' }}>
+                      {{ $type }}
+                    </option>
+                  @endforeach
+                </select>
+                @error('type')
+                  <div class="invalid-feedback">
+                    {{ $message }}
+                  </div>
+                @enderror
+              </div>
+              <div class="col-12 mb-2">
+                <div class="form-label required">Tanggal</div>
+                <div class="input-icon">
+                  <span class="input-icon-addon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                      viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <rect x="4" y="5" width="16" height="16" rx="2" />
+                      <line x1="16" y1="3" x2="16" y2="7" />
+                      <line x1="8" y1="3" x2="8" y2="7" />
+                      <line x1="4" y1="11" x2="20" y2="11" />
+                      <line x1="11" y1="15" x2="12" y2="15" />
+                      <line x1="12" y1="15" x2="12" y2="18" />
+                    </svg>
+                  </span>
+                  <input class="form-control @error('date') is-invalid @enderror" name="date"
+                    placeholder="Tanggal jadwal" id="date-input" value="{{ old('date') ?? date('Y-m-d') }}"
+                    autocomplete="off">
+                </div>
+                @error('date')
+                  <div class="text-danger fs-5 mt-1">
+                    {{ $message }}
+                  </div>
+                @enderror
+              </div>
+              <div class="col-12 mb-2">
+                <div class="form-label required">Barang</div>
+                <select class="form-select @error('inventory_id') is-invalid @enderror" name="inventory_id">
+                  <option value="" disabled selected>Pilih</option>
+                  @foreach ($inventories as $inventory)
+                    <option value="{{ $inventory->id }}" {{ old('inventory_id') == $inventory->id ? 'selected' : '' }}>
+                      {{ $inventory->name }}
+                    </option>
+                  @endforeach
+                </select>
+                @error('inventory_id')
+                  <div class="invalid-feedback">
+                    {{ $message }}
+                  </div>
+                @enderror
+              </div>
+              <div class="col-12 mb-2">
+                <label class="form-label required">Jumlah</label>
+                <input type="number" class="form-control @error('qty') is-invalid @enderror" name="qty"
+                  placeholder="Masukkan jumlah barang" value="{{ old('qty') }}" />
+                @error('qty')
+                  <div class="invalid-feedback">
+                    {{ $message }}
+                  </div>
+                @enderror
+              </div>
+              <div class="col-12">
+                <label class="form-label">Deskripsi</label>
+                <textarea class="form-control @error('desc') is-invalid @enderror" name="desc" rows="3"
+                  placeholder="Masukkan deskripsi barang">{{ old('desc') }}</textarea>
+                @error('desc')
+                  <div class="invalid-feedback">
+                    {{ $message }}
+                  </div>
+                @enderror
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn me-auto" data-bs-dismiss="modal">Batal</button>
+            <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">
+              Simpan
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 @endsection
 
 @section('library-js')
+  <script src="{{ asset('plugins/tabler/dist/libs/litepicker/dist/litepicker.js?1669759017') }}"></script>
 @endsection
 
 @section('custom-js')
-    <script>
-    </script>
+  <script>
+    const formOption = document.getElementById('formOption');
+    const btnFormOption = document.getElementById('btnFormOption');
+
+    const inputSearch = document.getElementById('inputSearch');
+    const btnSearch = document.getElementById('btnSearch');
+    const q = document.getElementById('q');
+
+    btnFormOption.addEventListener('click', submitFormOption);
+    btnSearch.addEventListener('click', submitFormOption);
+    inputSearch.addEventListener('keyup', function(event) {
+      if (event.keyCode === 13) {
+        event.preventDefault();
+        btnSearch.click();
+      }
+    });
+
+    function submitFormOption() {
+      q.value = inputSearch.value;
+      formOption.submit();
+    }
+
+    const modalDelete = document.getElementById('modalDelete');
+
+    modalDelete.addEventListener('show.bs.modal', function(event) {
+      formDelete.action = event.relatedTarget.dataset.action;
+    });
+
+    $(document).ready(function() {
+      @if ($errors->any())
+        $('#modalAdd').modal('show');
+      @endif
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
+      window.Litepicker && (new Litepicker({
+          element: document.getElementById('date-input'),
+          buttonText: {
+              previousMonth: `<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="15 6 9 12 15 18" /></svg>`,
+              nextMonth: `<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="9 6 15 12 9 18" /></svg>`,
+          },
+      }));
+    });
+  </script>
 @endsection

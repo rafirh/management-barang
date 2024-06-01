@@ -192,7 +192,7 @@
                   @endforeach
                   @if ($categories->count() == 0)
                     <tr class="text-center">
-                      <td colspan="10">
+                      <td colspan="99">
                         <div class="empty bg-transparent" style="height: 500px;">
                           <div class="empty-img"><img src="{{ asset('img\error\undraw_quitting_time_dm8t.svg') }}"
                               height="128">

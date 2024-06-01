@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('type');
             $table->integer('qty');
             $table->string('desc')->nullable();
+            $table->date('date');
             $table->timestamps();
             $table->foreign('inventory_id')->references('id')->on('inventories')->onDelete('cascade')->onUpdate('cascade');
         });

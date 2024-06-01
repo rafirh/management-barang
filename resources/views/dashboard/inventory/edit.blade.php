@@ -55,7 +55,7 @@
                 <div class="col-12 mb-2">
                   <label class="form-label required">Nama</label>
                   <input type="text" class="form-control @error('name') is-invalid @enderror" name="name"
-                    placeholder="Masukkan nama barang" value="{{ old('name') ?? $inventory->name }}" />
+                    placeholder="Masukkan nama barang" value="{{ old('name') ?? $inventory->name }}" disabled />
                   @error('name')
                     <div class="invalid-feedback">
                       {{ $message }}
@@ -73,9 +73,9 @@
                   @enderror
                 </div>
                 <div class="col-12 mb-2">
-                  <label class="form-label required">Stok Awal</label>
+                  <label class="form-label required">Stok</label>
                   <input type="number" class="form-control @error('stock') is-invalid @enderror" name="stock"
-                    placeholder="Masukkan kode barang" value="{{ old('stock') ?? $inventory->stock }}" />
+                    placeholder="Masukkan stok barang" value="{{ old('stock') ?? $inventory->stock }}" />
                   @error('stock')
                     <div class="invalid-feedback">
                       {{ $message }}
